@@ -4,17 +4,19 @@ import xbox
 import dropbox
 import requests
 
+
 xbox_email = os.environ.get('XBOX_EMAIL')
 xbox_password = os.environ.get('XBOX_PASS')
 xbox_gamertag = os.environ.get('XBOX_GAMERTAG')
 dropbox_token = os.environ.get('DROPBOX_ACCESS_TOKEN')
+dropbox_folder = 'Xbox Clips'
 
 print 'Getting already saved videos from Dropbox...'
 dropboxClient = dropbox.client.DropboxClient(dropbox_token)
-folder_metadata = dropboxClient.metadata('/Xbox Clips')
+folder_metadata = dropboxClient.metadata('/' + dropbox_folder)
 
-existing_videos = map(lambda file: file['path'].replace('/Xbox Clips/', '').replace('.mp4', ''), folder_metadata['contents'])
-print '...There are {} videos in the Xbox Clips on dropbox'.format(len(existing_videos))
+existing_videos = map(lambda file: file['path'].replace('/{}/'.format(dropbox_folder), '').replace('.mp4', ''), folder_metadata['contents'])
+print '...There are {} videos in the {} folder on Dropbox'.format(len(existing_videos), dropbox_folder)
 
 print ''
 print 'Authenticating to Xbox and getting gamer profile...'
@@ -33,7 +35,7 @@ for clip in clips:
   else:
     print 'Saving video to dropbox', clip_id
 
-    req = requests.post('https://api.dropboxapi.com/1/save_url/auto/Xbox Clips/{}.mp4'.format(clip_id), headers={
+    req = requests.post('https://api.dropboxapi.com/1/save_url/auto/{}/{}.mp4'.format(dropbox_folder, clip_id), headers={
       'Authorization': 'Bearer {}'.format(dropbox_token)
     }, data={'url': clip.media_url})
 

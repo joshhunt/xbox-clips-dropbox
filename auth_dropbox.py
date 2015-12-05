@@ -15,7 +15,6 @@ access_token, user_id = flow.finish(code)
 
 print '\nAwesome!'
 print 'Access token:' + access_token
-print 'User ID:' + user_id
+print 'Save this for clips.py'
 
 dropboxClient = dropbox.client.DropboxClient(access_token)
-print 'Dropbox account:', dropboxClient.account_info()
